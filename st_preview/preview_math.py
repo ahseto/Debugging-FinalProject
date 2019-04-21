@@ -9,10 +9,11 @@ import threading
 import time
 import types
 
+import sys, traceback
+import pdb
+
 import sublime
 import sublime_plugin
-
-import pdb 
 
 from ..parseTeXlog import parse_tex_log
 
@@ -115,7 +116,10 @@ def plugin_unloaded():
 def _create_image(latex_program, latex_document, base_name, color,
                   **kwargs):
     """Create an image for a latex document."""
+    logFile = open("/Users/maevemurphy/Library/Application Support/Sublime Text 3/Packages/LaTeXTools/st_preview/log.txt", "a")
+    logFile.write("--------------- NEW TRACE -----------------\n\n")
     rel_source_path = base_name + ".tex"
+    #traceback.print_tb(file=logFile)
     pdf_path = os.path.join(temp_path, base_name + ".pdf")
     image_path = os.path.join(temp_path, base_name + _IMAGE_EXTENSION)
 
@@ -129,12 +133,8 @@ def _create_image(latex_program, latex_document, base_name, color,
         f.write(latex_document)
 
     # compile the latex document to a pdf
-    #execute_command([
-    #    latex_program, '-interaction=nonstopmode', rel_source_path
-    #], cwd=temp_path)
-
     execute_command([
-        latex_program, rel_source_path
+        latex_program, '-interaction=nonstopmode', rel_source_path
     ], cwd=temp_path)
 
     pdf_exists = os.path.exists(pdf_path)
@@ -144,10 +144,8 @@ def _create_image(latex_program, latex_document, base_name, color,
             pdf_path = dvi_path
             pdf_exists = True
 
-    fd = open("/tmp/log.txt", "a")
-    fd.write("\n----------------------------------------------------------------------------------------------")
-    fd.write("\n" + latex_document)
-    fd.close()
+    logFile.write("-------------------- end log file -------------------\n\n\n")
+    logFile.close()
     if pdf_exists:
         # get the cropping boundaries; note that the relevant output is
         # written to STDERR rather than STDOUT; we specify 72 dpi in order to
@@ -212,11 +210,6 @@ def _create_image(latex_program, latex_document, base_name, color,
     err_file_path = image_path + _ERROR_EXTENSION
     err_log = []
     if not pdf_exists:
-        fd = open("/tmp/log.txt", "a")
-        fd.write("\n")
-        fd.write(base_name + "\n")
-        fd.write(pdf_path)
-        fd.close()
         err_log.append(
             "Failed to run '{latex_program}' to create pdf to preview."
             .format(**locals())
@@ -273,10 +266,6 @@ def _create_image(latex_program, latex_document, base_name, color,
 
 # CONVERT THREADING
 def _execute_job(job):
-    fd = open("/tmp/log.txt", "a")
-    fd.write("\n Inside _execute jobs function")
-    fd.write("\n" + str(job))
-    fd.close()
     _create_image(**job)
     job["cont"]()
 
@@ -638,10 +627,6 @@ class MathPreviewPhantomListener(sublime_plugin.ViewEventListener,
             self._update_phantoms()
 
     def _update_phantoms(self):
-        #pdb.set_trace()
-        fd = open("/tmp/log.txt", "a")
-        #fd.write(self)
-        fd.close()
         if not self.view.is_primary():
             return
         # not sure why this happens, but ignore these cases
