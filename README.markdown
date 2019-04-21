@@ -1,4 +1,10 @@
-# LateXTools: A LaTeX Plugin for Sublime Text 2 and 3
+# THIS IS A COPY OF LATEX TOOLS FOR A DEBUGGING PROJECT ALL RIGHTS TO OWNERS BELOW
+
+
+
+
+
+## LateXTools: A LaTeX Plugin for Sublime Text 2 and 3
 
 by Ian Bacher, Marciano Siniscalchi, and Richard Stein
 
