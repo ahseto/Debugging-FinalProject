@@ -80,6 +80,9 @@ _lt_settings = {}
 _name = "preview_math"
 
 
+def _hit_change():
+    print("Hello world!")
+
 def _on_setting_change():
     global _density, _scale_quotient, _hires
     _scale_quotient = _lt_settings.get(
@@ -491,6 +494,7 @@ class MathPreviewPhantomListener(sublime_plugin.ViewEventListener,
             self.__dict__[attr_name] = _lt_settings.get(settings_name)
 
         lt_attr.update(watch_attr)
+        _lt_settings.add_on_change("preview_math_mode", _hit_change)
 
         self._init_list_add_on_change(_name, view_attr, lt_attr)
         update_packages_str(init=True)
@@ -643,7 +647,7 @@ class MathPreviewPhantomListener(sublime_plugin.ViewEventListener,
         if (window is None or
             not any(window.active_view_in_group(g) == view
                     for g in range(window.num_groups()))):
-                return
+            return
 
         # TODO we may only want to apply if the view is visible
         # if view != view.window().active_view():
