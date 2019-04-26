@@ -494,7 +494,7 @@ class MathPreviewPhantomListener(sublime_plugin.ViewEventListener,
             self.__dict__[attr_name] = _lt_settings.get(settings_name)
 
         lt_attr.update(watch_attr)
-        _lt_settings.add_on_change("preview_math_mode", self.update_phantoms)
+        _lt_settings.add_on_change("preview_math_mode", self.delete_phantoms)
 
         self._init_list_add_on_change(_name, view_attr, lt_attr)
         update_packages_str(init=True)
